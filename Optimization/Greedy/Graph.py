@@ -43,14 +43,22 @@ class Graph:
         plt.show()
 
     def kruskal(self):
-        MST = Graph()
+        MST = Graph() # Graph to store Minimum Spanning Tree MST = (|V'|, |E'|)
+        # |V'| = |V|, |E'| = |V| - 1
+
+        # Disjoint set to keep track of nodes forming cycles
         ds = DisjointSet.DisjointSet()
         ds.makeSet(self.__edgeList.keys())
-        minCost, edgeCount = 0,0
-        n = len(self.__edgeList)
-        edgeHeap = []
-        seenEdges = set()
 
+        minCost = 0 # Total cost of the Minimum Spanning tree
+        edgeCount = 0 # Number of edges of the MST |E'| = |V| - 1
+        n = len(self.__edgeList) # Total Number of Vertices in the graph |V|
+
+        edgeHeap = [] # Heap to store a min heap of tuples (weight,source,destination)
+        seenEdges = set() # set of visited edges
+
+        # Iterating the Graph, and sorting the edge list into a heap
+        # Sorted on the basis of their weights
         for source in self.__edgeList:
             for destination,weight in self.__edgeList[source].items():
                 if (source,destination) not in seenEdges:
@@ -58,14 +66,18 @@ class Graph:
                     seenEdges.add((destination,source)) 
                     # We add as destination,source because for undirected graph,
                     # we will check for the reverse as the duplicate
-        heapq.heapify(edgeHeap)
+        heapq.heapify(edgeHeap) # Heapify the edgeList
 
+        # Traversing the edgeList Heap until |E'| = |V|-1
         while(edgeCount < n-1 and edgeHeap):
-            min = heapq.heappop(edgeHeap)
-            weight = min[0]
-            source = min[1]
-            destination = min[2]
-            
+            # Emptying the min-heap and extracting the data from each tuple
+            weight,source,destination = heapq.heappop(edgeHeap)
+
+            # if nodes are not in a cycle (Disjoint set elements)
+            # add node,edge relationship to MST
+            # Update edge count
+            # Update sets of the source and destination
+            # Calculate the total cost (minCost)
             if(ds.find(source) != ds.find(destination)):
                 MST.addEdge(source,destination,weight)
                 edgeCount += 1
